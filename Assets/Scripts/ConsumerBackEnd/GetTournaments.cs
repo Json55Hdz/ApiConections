@@ -1,12 +1,18 @@
 ﻿using Newtonsoft.Json;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class GetTournaments : MonoBehaviour
 {
-    [SerializeField]
     private GetTorunamentsResponse responseTournamets;
+
+    [SerializeField]
+    private TournamentsView tournamentsView;
+    [SerializeField]
+    private UnityEvent onTournamentsFinishGet;
+
+    
+
     [EasyButtons.Button]
     public void GetTournamets ()
     {
@@ -25,10 +31,13 @@ public class GetTournaments : MonoBehaviour
         if (code.Contains("200"))
         {
             responseTournamets = JsonConvert.DeserializeObject<GetTorunamentsResponse>(response);
+            tournamentsView.SetTournamentResponses(responseTournamets);
+            onTournamentsFinishGet.Invoke();
         }
         else
         {
-
+            var notification = new NotificationContend("Ups!", "Something was wrong, pls check your connection and try again later.", "OK", null);
+            NotificationManager.Instance.SetupSimpleNotification(notification);
         }
     }
 
